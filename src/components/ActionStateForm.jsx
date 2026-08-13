@@ -21,10 +21,10 @@ function ActionStateForm() {
         throw new Error(`Request failed : ${response.status}`);
       }
 
-      const result = await response.json();
-      return result;
+      const data = await response.json();
+      return { data, error: null };
     } catch (err) {
-      console.log(err.message);
+      return { ...previousState, error: err.message };
     }
   };
 
@@ -38,7 +38,10 @@ function ActionStateForm() {
 
         <button type="submit">Submit</button>
       </form>
-      {!!state && <pre>{JSON.stringify(state, null, 2)}</pre>}
+
+      {!!state?.data && <pre>{JSON.stringify(state.data, null, 2)}</pre>}
+
+      {!!state?.error && <pre>{state.error}</pre>}
     </div>
   );
 }
