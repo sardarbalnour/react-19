@@ -4,6 +4,7 @@ import { BASE_URL } from "../constants/constants";
 
 function ActionStateForm() {
   const createPost = async (previousState, formData) => {
+    console.log(previousState);
     const form = Object.fromEntries(formData.entries());
     // console.log({ previousState, form });
 
