@@ -1,6 +1,7 @@
 import { useActionState } from "react";
 
 import { BASE_URL } from "../constants/constants";
+import SubmitButton from "./SubmitButton";
 
 function ActionStateForm() {
   const createPost = async (previousState, formData) => {
@@ -28,7 +29,7 @@ function ActionStateForm() {
     }
   };
 
-  const [state, submitAction, isPending] = useActionState(createPost, null);
+  const [state, submitAction] = useActionState(createPost, null);
 
   return (
     <div>
@@ -36,11 +37,11 @@ function ActionStateForm() {
         <input type="text" name="title" placeholder="title" />
         <input type="text" name="body" placeholder="body" />
 
-        <button type="submit" disabled={isPending}>
+        {/* <button type="submit" disabled={isPending}>
           {isPending ? "Submiting..." : "Submit"}
-        </button>
+        </button> */}
+        <SubmitButton />
       </form>
-
       {!!state?.data && <pre>{JSON.stringify(state.data, null, 2)}</pre>}
 
       {!!state?.error && <pre>{state.error}</pre>}
