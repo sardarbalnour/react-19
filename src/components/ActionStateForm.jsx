@@ -4,7 +4,7 @@ import { BASE_URL } from "../constants/constants";
 
 function ActionStateForm() {
   const createPost = async (previousState, formData) => {
-    console.log(previousState);
+    // console.log(previousState);
     const form = Object.fromEntries(formData.entries());
     // console.log({ previousState, form });
 
@@ -36,7 +36,9 @@ function ActionStateForm() {
         <input type="text" name="title" placeholder="title" />
         <input type="text" name="body" placeholder="body" />
 
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={isPending}>
+          {isPending ? "Submiting..." : "Submit"}
+        </button>
       </form>
 
       {!!state?.data && <pre>{JSON.stringify(state.data, null, 2)}</pre>}
