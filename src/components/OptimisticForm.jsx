@@ -1,4 +1,4 @@
-import { useEffect, useOptimistic, useState } from "react";
+import { startTransition, useEffect, useOptimistic, useState } from "react";
 
 import { BASE_URL } from "../constants/constants";
 
@@ -8,7 +8,10 @@ function OptimisticForm() {
   const [data, setData] = useState([]);
   const [optimisticData, setOptimisticData] = useOptimistic(
     data,
-    (currentData, optimisticValue) => [optimisticValue, ...currentData]
+    (currentData, optimisticValue) => [
+      { ...optimisticValue, isPending: true },
+      ...currentData,
+    ]
   );
 
   useEffect(() => {
@@ -17,10 +20,33 @@ function OptimisticForm() {
       .then((json) => setData(json));
   }, []);
 
-  const submitAction = (formData) => {
+  const submitAction = async (formData) => {
     const form = Object.fromEntries(formData.entries());
     setOptimisticData(form);
     console.log(form);
+
+    // fetch
+    try {
+      const response = await fetch(`${BASE_URL}/posts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed : ${response.status}`);
+      }
+
+      const data = await response.json();
+      // setData((previousData) => [data, ...previousData]);
+      startTransition(() => {
+        setData((previousData) => [data, ...previousData]);
+      });
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (
@@ -37,6 +63,9 @@ function OptimisticForm() {
         {optimisticData?.map((post, index) => (
           <div key={index}>
             <span>{post?.title}</span>
+            {post?.isPending && (
+              <span style={{ color: "red" }}>Loading...</span>
+            )}
           </div>
         ))}
       </div>
