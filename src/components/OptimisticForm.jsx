@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useOptimistic, useState } from "react";
 
 import { BASE_URL } from "../constants/constants";
 
@@ -6,14 +6,22 @@ import SubmitButton from "./SubmitButton";
 
 function OptimisticForm() {
   const [data, setData] = useState([]);
-  
+  const [optimisticData, setOptimisticData] = useOptimistic(
+    data,
+    (currentData, optimisticValue) => [optimisticValue, ...currentData]
+  );
+
   useEffect(() => {
     fetch(`${BASE_URL}/posts`)
       .then((res) => res.json())
       .then((json) => setData(json));
   }, []);
 
-  const submitAction = () => {};
+  const submitAction = (formData) => {
+    const form = Object.fromEntries(formData.entries());
+    setOptimisticData(form);
+    console.log(form);
+  };
 
   return (
     <>
@@ -26,8 +34,8 @@ function OptimisticForm() {
         </form>
       </div>
       <div>
-        {data?.map((post) => (
-          <div key={post?.id}>
+        {optimisticData?.map((post, index) => (
+          <div key={index}>
             <span>{post?.title}</span>
           </div>
         ))}
