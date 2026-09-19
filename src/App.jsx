@@ -28,3 +28,4 @@ export default App;
 //back to Mahabad
 //!
 //consult with mehdi
+//react interview questions
